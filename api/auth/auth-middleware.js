@@ -9,15 +9,17 @@ const restricted = (req, res, next) => {
         err
           ? next({ status: 401, message: "token invalid" })
           : (req.decodedJwt = decoded),
-          console.log(req.decodedJwt),
+          console.log(decoded),
           next();
       })
     : next({ status: 401, message: "token required" });
 };
 
 // AUTHORIZATION
-const checkRole = (req, res, next) => {
-  next();
+const checkRole = (role) => (req, res, next) => {
+  req.decodedJwt && req.decodedJwt.role === role // this is where we would check the role
+    ? next()
+    : next({ status: 403, message: "you are not authorized" });
 };
 
 module.exports = {
